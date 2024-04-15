@@ -2,6 +2,8 @@ import express from "express";
 import colors from "colors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+import { notFound, errorHandler } from "./middlewares/errorMiddlewares.js";
+
 dotenv.config();
 connectDB();
 
@@ -10,6 +12,9 @@ const app = express();
 app.get("/", (req, res) => {
   res.send("Api is running...");
 });
+
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5001;
 const NODE_ENV = process.env.NODE_ENV || "development";
