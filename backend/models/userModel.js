@@ -26,8 +26,8 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
     avatar: {
-      public_id: string,
-      url: string,
+      public_id: "string",
+      url: "string",
     },
     role: {
       type: "string",
@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
     },
     courses: [
       {
-        courseId: String,
+        courseId: "string",
       },
     ],
   },
