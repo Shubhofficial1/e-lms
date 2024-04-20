@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import bcrypt from "bcryptjs";
 const emailRegexPatter = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
 
@@ -40,7 +40,8 @@ const userSchema = new mongoose.Schema(
     },
     courses: [
       {
-        courseId: "string",
+        courseId: mongoose.Schema.Types.ObjectId,
+        ref: "Courses",
       },
     ],
   },
