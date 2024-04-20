@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import sendMail from "../utils/sendMail.js";
 import createActivationToken from "../utils/createActivationToken.js";
 import dotenv from "dotenv";
+import generateToken from "../utils/generateToken.js";
 dotenv.config();
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -81,4 +82,31 @@ const activateUser = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, activateUser };
+const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    res.status(404);
+    throw new Error("Please enter email and password");
+  }
+
+  const user = await User.findOne({ email }).select("+password");
+
+  if (user && (await user.matchPassword(password))) {
+    generateToken(user, res, 200);
+  } else {
+    res.status(401);
+    throw new Error("Invalid Email or Password");
+  }
+});
+
+const logoutUser = asyncHandler(async (req, res) => {
+  res.cookie("access_token", "", { maxAge: 1 });
+  res.cookie("refresh_token", "", { maxAge: 1 });
+  res.status(200).json({
+    success: true,
+    message: "Logged Out Successfully",
+  });
+});
+
+export { registerUser, activateUser, loginUser, logoutUser };
