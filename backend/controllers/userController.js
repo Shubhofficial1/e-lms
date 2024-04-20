@@ -2,6 +2,7 @@ import User from "../models/userModel.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
 import jwt from "jsonwebtoken";
 import sendMail from "../utils/sendMail.js";
+import createActivationToken from "../utils/createActivationToken.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -36,18 +37,6 @@ const registerUser = asyncHandler(async (req, res) => {
     activationToken: activationToken.token,
   });
 });
-
-export const createActivationToken = (user) => {
-  const activationCode = Math.floor(1000 + Math.random() * 9000).toString();
-  const token = jwt.sign(
-    { user, activationCode },
-    process.env.ACTIVATION_SECRET,
-    {
-      expiresIn: "5m",
-    }
-  );
-  return { token, activationCode };
-};
 
 const activateUser = asyncHandler(async (req, res) => {
   const { activation_token, activation_code } = req.body;
