@@ -49,4 +49,47 @@ export const createActivationToken = (user) => {
   return { token, activationCode };
 };
 
-export { registerUser };
+const activateUser = asyncHandler(async (req, res) => {
+  const { activation_token, activation_code } = req.body;
+
+  if (!activation_token || !activation_code) {
+    res.status(400);
+    throw new Error("Invalid Request Body");
+  }
+
+  const decodedUser = jwt.verify(
+    activation_token,
+    process.env.ACTIVATION_SECRET
+  );
+
+  if (decodedUser.activationCode !== activation_code) {
+    res.status(400);
+    throw new Error("Invalid Activation Code");
+  }
+
+  const { name, email, password } = decodedUser.user;
+
+  const existsUser = await User.findOne({ email });
+
+  if (existsUser) {
+    res.status(400);
+    throw new Error("User already exists");
+  }
+
+  const user = await User.create({
+    name,
+    email,
+    password,
+  });
+
+  if (user) {
+    res.status(201).json({
+      success: true,
+    });
+  } else {
+    res.status(400);
+    throw new Error("Something went wrong");
+  }
+});
+
+export { registerUser, activateUser };
