@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema(
     courses: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Course",
+        ref: "Courses",
       },
     ],
   },
@@ -55,11 +55,13 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 userSchema.pre("save", async function (next) {
+  console.log("went here 1");
   if (!this.isModified("password")) {
     next();
   }
+  console.log("went here 2");
   const salt = await bcrypt.genSalt(10);
-  this.password = bcrypt.hash(this.password, salt);
+  this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 
