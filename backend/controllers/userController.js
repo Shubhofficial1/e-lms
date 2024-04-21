@@ -6,6 +6,7 @@ import createActivationToken from "../utils/createActivationToken.js";
 import dotenv from "dotenv";
 import generateToken from "../utils/generateToken.js";
 dotenv.config();
+import { redis } from "../config/redis.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
@@ -101,9 +102,11 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-  res.cookie("access_token", "", { httpOnly: true, expires: new Date(0) });
-  res.cookie("refresh_token", "", { httpOnly: true, expires: new Date(0) });
-  res.status(200).json({
+  res.cookie("access_token", "", { maxAge: 1 });
+  res.cookie("refresh_token", "", { maxAge: 1 });
+  const userId = req.user._id || "";
+  await redis.del(userId);
+  await res.status(200).json({
     success: true,
     message: "Logged Out Successfully",
   });
