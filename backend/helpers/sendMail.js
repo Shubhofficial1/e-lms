@@ -17,10 +17,8 @@ const sendEmail = async (options) => {
 
   const { email, subject, template, data } = options;
 
-  //   get the path of email template file
   let __dirname = path.resolve();
   const templatePath = path.join(__dirname + "/backend/mails", template);
-  //Render the email template with ejs
   const html = await ejs.renderFile(templatePath, data);
 
   const mailOptions = {

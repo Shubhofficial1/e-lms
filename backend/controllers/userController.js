@@ -1,7 +1,7 @@
 import User from "../models/userModel.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
 import jwt from "jsonwebtoken";
-import sendMail from "../utils/sendMail.js";
+import sendMail from "../helpers/sendMail.js";
 import createActivationToken from "../utils/createActivationToken.js";
 import dotenv from "dotenv";
 import generateToken from "../utils/generateToken.js";
@@ -101,8 +101,8 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-  res.cookie("access_token", "", { maxAge: 1 });
-  res.cookie("refresh_token", "", { maxAge: 1 });
+  res.cookie("access_token", "", { httpOnly: true, expires: new Date(0) });
+  res.cookie("refresh_token", "", { httpOnly: true, expires: new Date(0) });
   res.status(200).json({
     success: true,
     message: "Logged Out Successfully",
